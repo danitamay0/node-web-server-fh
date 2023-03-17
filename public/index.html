@@ -9,7 +9,6 @@
 <body>
   <h1>Google SignIn</h1>
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <div id="g_id_onload" data-client_id="1054186831659-2mcv93dalr1lst0fi72og52v8jradufb.apps.googleusercontent.com"
     data-callback="handleCredentialResponse" data-auto_prompt="false">
   </div>
@@ -17,12 +16,42 @@
     data-shape="rectangular" data-logo_alignment="left">
   </div>
 
+  <button id="signOut">Sign Out</button>
+
   <script>
     function handleCredentialResponse(response) {
-      const idToken = response.credential
-      console.log(idToken);
+      const body = { id_token: response.credential }
+
+      fetch("http://localhost:3000/api/auth/google", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+        .then(res => res.json())
+        .then(res => {
+          localStorage.setItem('email', res.user.email)
+        }).catch(err => console.log)
     }
+
+    const button = document.getElementById('signOut')
+
+    button.onclick = () => {
+      console.log(localStorage.getItem('email'),google.accounts.id);
+      google.accounts.id.disableAutoSelect()
+
+      google.accounts.id.revoke(localStorage.getItem('email') || '', done => {
+        localStorage.clear()
+        location.reload()
+      })
+    }
+
+
   </script>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
 </body>
 
 </html>

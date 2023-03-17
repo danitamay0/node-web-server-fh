@@ -2,6 +2,7 @@ const { response } = require("express");
 const bycryjs = require("bcryptjs");
 const User = require("../models/user");
 const { generateJWT } = require("../helpers/generate-jwt");
+const { googleVerify } = require("../helpers/google-verify");
 
 
 
@@ -47,4 +48,45 @@ const login = async (req, res = response) => {
 }
 
 
-module.exports = { login }
+const googleSignIn = async (req, res = response) => {
+
+    const { id_token } = req.body
+
+    try {
+        const { email, img, name } = await googleVerify(id_token)
+
+        let user = await User.findOne({ email })
+
+        if (!user) {
+            const data = {
+                name,
+                email,
+                password: ':P',
+                img,
+                google: true,
+            }
+
+            user = new User(data)
+            await user.save()
+        }
+
+        if (!user.state) {
+            return res.status(401).json({
+                msg: 'User blocked'
+            })
+        }
+
+        const token = await generateJWT(user.id)
+
+        return res.json({
+            token,
+            user
+        })
+    } catch (error) {
+        return res.status(400).json({
+            msg: "Token not verified",
+        })
+    }
+}
+
+module.exports = { login, googleSignIn }
