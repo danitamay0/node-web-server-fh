@@ -1,12 +1,28 @@
-
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <title>Acceso denegado</title>
-  </head>
-  
-  <body>
-    <h1>Acceso Denegado</h1>
-  </body>
+
+<head>
+  <title>Google SignIn</title>
+</head>
+
+<body>
+  <h1>Google SignIn</h1>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <div id="g_id_onload" data-client_id="1054186831659-2mcv93dalr1lst0fi72og52v8jradufb.apps.googleusercontent.com"
+    data-callback="handleCredentialResponse" data-auto_prompt="false">
+  </div>
+  <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+    data-shape="rectangular" data-logo_alignment="left">
+  </div>
+
+  <script>
+    function handleCredentialResponse(response) {
+      const idToken = response.credential
+      console.log(idToken);
+    }
+  </script>
+</body>
+
 </html>
