@@ -6,9 +6,20 @@ const {
   usersPut,
   usersDelete,
 } = require("../controllers/users");
-const { isRoleValid, emailExist, userExistbyId, isRoleValidOptional } = require("../helpers/db-validators");
-const { fieldsValidator } = require("../middleware/fields-validator");
 
+
+const { isRoleValid, emailExist, userExistbyId, isRoleValidOptional } = require("../helpers/db-validators");
+/* const { fieldsValidator } = require("../middleware/fields-validator");
+const { isAdminRoleValidator, hasRoleValidator } = require("../middleware/role-validator");
+const { validateJWT } = require("../middleware/validate-jwt"); */
+
+const {
+  fieldsValidator,
+  isAdminRoleValidator, hasRoleValidator,
+  validateJWT
+
+} = require("../middleware")
+console.log(fieldsValidator);
 const router = Router();
 
 router.get("/", usersGet);
@@ -30,16 +41,21 @@ router.post(
   usersPost
 );
 
-router.put("/:id",[
-  check('id','Is not a valid id').isMongoId(),
+//check lo usamos para validaciones de campos, middleware personalizados tienen los req y res
+
+router.put("/:id", [
+  check('id', 'Is not a valid id').isMongoId(),
   check("id").custom(userExistbyId),
   check("role").custom(isRoleValidOptional),
   fieldsValidator
-],usersPut);
+], usersPut);
 
 
-router.delete("/:id",[
-  check('id','Is not a valid id').isMongoId(),
+router.delete("/:id", [
+  validateJWT,
+  isAdminRoleValidator,
+  hasRoleValidator('ADMIN_ROLE', 'USER_ROLE'),
+  check('id', 'Is not a valid id').isMongoId(),
   check("id").custom(userExistbyId),
   fieldsValidator
 
