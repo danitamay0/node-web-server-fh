@@ -1,4 +1,4 @@
-const { Category,Role, User } = require("../models");
+const { Category, Role, User, Product } = require("../models");
 /* const Role = require("../models/role");
 const User = require("../models/user"); */
 
@@ -35,6 +35,7 @@ const userExistbyId = async (id = "") => {
   }
 };
 
+/* CATEGEGORY */
 const categoryExistbyName = async (name = "") => {
   //validate category
   const existCategory = await Category.findOne({ name: name.toUpperCase() });
@@ -46,14 +47,42 @@ const categoryExistbyName = async (name = "") => {
 
 const categoryNotExistbyId = async (id = "") => {
   //validate category
-  const existCategory = await Category.findById(id);
+  if (id) {
+    const existCategory = await Category.findById(id);
 
-  if (!existCategory) {
-    throw new Error(`The category not exist`);
+    if (!existCategory) {
+      throw new Error(`The category not exist`);
+    }
+  }
+
+};
+
+
+/* PRODUCT */
+const productNotExistById = async (id = "") => {
+  //validate category
+  if (id) {
+    const existProduct = await Product.findById(id);
+
+    if (!existProduct) {
+      throw new Error(`The product not exist`);
+    }
+  }
+
+};
+
+const productExistbyName = async (name = "") => {
+  //validate category
+  if (name) {
+
+    const existProduct = await Product.findOne({ name: name.toUpperCase() });
+
+    if (existProduct) {
+      throw new Error(`The product ${name} already exist`);
+    }
   }
 };
 
 
 
-
-module.exports = { isRoleValid, isRoleValidOptional, emailExist, userExistbyId, categoryExistbyName, categoryNotExistbyId };
+module.exports = { isRoleValid, isRoleValidOptional, emailExist, userExistbyId, categoryExistbyName, categoryNotExistbyId, productNotExistById, productExistbyName };
