@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const {dbConnection} = require("../database/config");
+const { dbConnection } = require("../database/config");
 
 class Server {
   constructor() {
@@ -8,10 +8,11 @@ class Server {
     this.port = process.env.PORT;
 
     this.path = {
-      auth:'/api/auth',
+      auth: '/api/auth',
       categories: '/api/categories',
       products: '/api/products',
-      user:'/api/users',
+      search: '/api/search',
+      user: '/api/users',
     }
 
     // Connect DB
@@ -24,11 +25,11 @@ class Server {
     this.routes();
   }
 
-  async connectDB(){
+  async connectDB() {
     await dbConnection()
   }
 
-  middlewares(){
+  middlewares() {
 
     // CORS
     this.app.use(cors())
@@ -42,12 +43,13 @@ class Server {
 
   routes() {
 
-    this.app.use(this.path.auth,require('../routes/auth'))
-    this.app.use(this.path.categories,require('../routes/categories'))
-    this.app.use(this.path.products,require('../routes/products'))
-    this.app.use(this.path.user,require('../routes/users'))
+    this.app.use(this.path.auth, require('../routes/auth'))
+    this.app.use(this.path.categories, require('../routes/categories'))
+    this.app.use(this.path.products, require('../routes/products'))
+    this.app.use(this.path.search, require('../routes/search'))
+    this.app.use(this.path.user, require('../routes/users'))
 
-    
+
   }
 
   listen() {
