@@ -84,5 +84,15 @@ const productExistbyName = async (name = "") => {
 };
 
 
+// Validate Collections valid
 
-module.exports = { isRoleValid, isRoleValidOptional, emailExist, userExistbyId, categoryExistbyName, categoryNotExistbyId, productNotExistById, productExistbyName };
+const collectiosPermited = (collection, collections = []) => {
+
+  if (!collections.includes(collection)) {
+    throw new Error(`The collection ${collection} is not permitted`);
+  }
+  return true
+}
+
+
+module.exports = { isRoleValid, isRoleValidOptional, emailExist, userExistbyId, categoryExistbyName, categoryNotExistbyId, productNotExistById, productExistbyName, collectiosPermited };
